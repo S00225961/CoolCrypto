@@ -8,9 +8,23 @@
 </head>
 <body>
   <h1>📊 Cool Crypto</h1>
+  <button id="logout-btn">Sign Out</button>
   <h2>Top 5 Cryptocurrencies</h2>
   <div class="charts" id="charts"></div>
-  
-  <script src="app.js"></script>
+
+  <script type="module">
+    import { userManager, signOutRedirect } from './cognito-config.js';
+    import { renderCharts } from './app.js';
+
+    const idToken = localStorage.getItem("id_token");
+
+    if (!idToken) {
+      userManager.signinRedirect();
+    } else {
+      renderCharts();
+    }
+
+    document.getElementById("logout-btn").addEventListener("click", signOutRedirect);
+  </script>
 </body>
 </html>
