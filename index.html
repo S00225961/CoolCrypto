@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Cool Crypto</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/oidc-client@1.11.5/dist/oidc-client.min.js"></script>
-</head>
-<body>
-  <h1>📊 Cool Crypto</h1>
-  <button id="logout-btn">Sign Out</button>
-  <h2>Top 5 Cryptocurrencies</h2>
-  <div class="charts" id="charts"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cool Crypto</title>
+    <link rel="stylesheet" href="src/style.css">
 
-  <script src="./cognito.js"></script>
-  <script src="./app.js"></script>
-</body>
+  </head>
+  <body>
+    <h1>📊 Cool Crypto</h1>
+    <h2>Top 5 Cryptocurrencies</h2>
+    <div class="charts" id="charts"></div>
+
+    <!-- Sign-In and Sign-Out Buttons -->
+    <div>
+      <button id="signIn">Sign In</button>
+      <button id="signOut">Sign out</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="src/main.js"></script>
+  </body>
 </html>
+

@@ -1,3 +1,27 @@
+import { Buffer } from 'buffer';
+import process from 'process';
+import { userManager, signOutRedirect } from '../auth.js';
+import { resendSignUpCode } from 'aws-amplify/auth';
+
+window.global = window;
+window.Buffer = Buffer;
+window.process = process;
+
+window.addEventListener('load', () => {
+  checkIfUserIsAuthenticated();
+});
+
+// Sign-In Button Logic
+document.getElementById("signIn").addEventListener("click", async () => {
+  await userManager.signinRedirect();
+});
+
+// Sign-Out Button Logic
+document.getElementById("signOut").addEventListener("click", async () => {
+  await signOutRedirect();
+});
+
+// Charts
 async function renderCharts() {
   const API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=5&page=1&sparkline=true';
 
@@ -81,3 +105,15 @@ async function renderCharts() {
     createChart(id, crypto.name, last24hPrices);
   });
 }
+
+async function checkIfUserIsAuthenticated() {
+  const user = await userManager.getUser();
+
+  if (user && !user.expired) {
+    console.log("User is authenticated:", user);
+    renderCharts()
+  } else {
+    console.log("User is not authenticated");
+  }
+}
+
