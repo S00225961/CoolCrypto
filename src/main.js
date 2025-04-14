@@ -3,9 +3,20 @@ import { resendSignUpCode } from 'aws-amplify/auth';
 
 window.global = window;
 
-window.onload = function() {
+window.onload = async function () {
+  if (window.location.search.includes("code=")) {
+    try {
+      const user = await userManager.signinRedirectCallback();
+      console.log("Processed redirect callback. Logged in user:", user);
+      window.history.replaceState({}, document.title, "/");
+    } catch (err) {
+      console.error("Failed to handle redirect callback:", err);
+    }
+  }
+
   checkIfUserIsAuthenticated();
 };
+
 
 
 // Sign-In Button Logic
@@ -105,12 +116,19 @@ async function renderCharts() {
 
 async function checkIfUserIsAuthenticated() {
   console.log("Check if user is authenticated called");
-  const user = await userManager.getUser();
 
-  if (user && !user.expired) {
-    console.log("User is authenticated:", user);
-    renderCharts();
-  } else {
-    console.log("User is not authenticated");
+  try {
+    const user = await userManager.getUser();
+    console.log("userManager.getUser() returned:", user);
+
+    if (user && !user.expired) {
+      console.log("User is authenticated:", user);
+      renderCharts();
+    } else {
+      console.log("User is not authenticated");
+    }
+  } catch (err) {
+    console.error("Error retrieving user:", err);
   }
 }
+
