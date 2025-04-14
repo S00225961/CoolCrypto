@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Cool Crypto</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/oidc-client@1.11.5/dist/oidc-client.min.js"></script>
 </head>
 <body>
   <h1>📊 Cool Crypto</h1>
@@ -12,29 +13,7 @@
   <h2>Top 5 Cryptocurrencies</h2>
   <div class="charts" id="charts"></div>
 
-  <script type="module">
-    import { userManager, signOutRedirect, isTokenValid } from './cognito.js';
-    import { renderCharts } from './app.js';
-
-    async function init() {
-      try {
-        const user = await userManager.getUser();
-
-        if (!user || !user.id_token || !isTokenValid(user.id_token)) {
-          await userManager.signinRedirect();
-        } else {
-          localStorage.setItem("id_token", user.id_token);
-          renderCharts();
-        }
-
-        document.getElementById("logout-btn").addEventListener("click", signOutRedirect);
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-        await userManager.signinRedirect();
-      }
-    }
-
-    init();
-  </script>
+  <script src="./cognito.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>

@@ -1,36 +1,31 @@
-import { UserManager } from "oidc-client-ts";
-
-const cognitoAuthConfig = {
-    authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_59GZQkxdi",
-    client_id: "1u2p66b14lorj0ctn1gu9o0rqa",
-    redirect_uri: "https://lustrous-rolypoly-ec9620.netlify.app/",
-    response_type: "code",
-    scope: "email openid phone"
+const config = {
+  authority: "https://us-east-159gzqkxdi.auth.us-east-1.amazoncognito.com", // Your Cognito domain
+  client_id: "1u2p66b14lorj0ctn1gu9o0rqa", // Your app client ID
+  redirect_uri: window.location.origin + "/", // This should be allowed in Cognito callback URLs
+  response_type: "code",
+  scope: "openid profile email"
 };
 
-// create a UserManager instance
-export const userManager = new UserManager({
-    ...cognitoAuthConfig,
-});
+const userManager = new Oidc.UserManager(config);
 
-export async function signOutRedirect () {
-  const clientId = "1u2p66b14lorj0ctn1gu9o0rqa";
-  const logoutUri = "https://lustrous-rolypoly-ec9620.netlify.app/";
-  const cognitoDomain = "https://us-east-159gzqkxdi.auth.us-east-1.amazoncognito.com";
-  localStorage.removeItem("id_token");
-  window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-};
-
-export function isTokenValid(idToken) {
-  try {
-    const payload = JSON.parse(atob(idToken.split('.')[1]));
-    return payload.exp * 1000 > Date.now(); // Check expiration
-  } catch {
-    return false;
+// Check auth and redirect if not authenticated
+userManager.getUser().then(user => {
+  if (!user || user.expired) {
+    userManager.signinRedirect();
+  } else {
+    localStorage.setItem("id_token", user.id_token);
+    renderCharts(); // From app.js
   }
-}
 
-
-
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    localStorage.removeItem("id_token");
+    userManager.signoutRedirect({
+      post_logout_redirect_uri: "https://your-site.com/" // ✅ Add this URL in Cognito Logout URLs
+    });
+  });
+}).catch(error => {
+  console.error("Auth error:", error);
+  userManager.signinRedirect();
+});
 
 
