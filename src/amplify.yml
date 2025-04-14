@@ -1,0 +1,16 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm install  # Install dependencies
+    build:
+      commands:
+        - npm run build  # Run the Vite build command
+  artifacts:
+    baseDirectory: dist  # This is where Vite outputs the build
+    files:
+      - '**/*'  # Include all files in the dist folder
+  cache:
+    paths:
+      - node_modules/**  # Cache the node_modules to speed up future builds
