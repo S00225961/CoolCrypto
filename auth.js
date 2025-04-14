@@ -1,4 +1,4 @@
-import { UserManager } from 'oidc-client-ts';
+import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
 // Cognito OIDC configuration (adjust these with your settings)
 const cognitoAuthConfig = {
@@ -12,6 +12,7 @@ const cognitoAuthConfig = {
 // Create a UserManager instance
 export const userManager = new UserManager({
   ...cognitoAuthConfig,
+  userStore: new WebStorageStateStore({ store: window.localStorage })
 });
 
 // Sign-out functionality
