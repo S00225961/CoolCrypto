@@ -3,9 +3,10 @@ import { resendSignUpCode } from 'aws-amplify/auth';
 
 window.global = window;
 
-window.addEventListener('load', () => {
+window.onload = function() {
   checkIfUserIsAuthenticated();
-});
+};
+
 
 // Sign-In Button Logic
 document.getElementById("signIn").addEventListener("click", async () => {
@@ -103,13 +104,13 @@ async function renderCharts() {
 }
 
 async function checkIfUserIsAuthenticated() {
+  console.log("Check if user is authenticated called");
   const user = await userManager.getUser();
 
   if (user && !user.expired) {
     console.log("User is authenticated:", user);
-    renderCharts()
+    renderCharts();
   } else {
     console.log("User is not authenticated");
   }
 }
-
