@@ -8,14 +8,12 @@
   </head>
   <body>
     <h1>📊 Cool Crypto</h1>
-    <h2>Top 5 Cryptocurrencies</h2>
-    <div class="charts" id="charts"></div>
 
-    <!-- Sign-In and Sign-Out Buttons -->
     <div>
       <button id="signIn">Sign In</button>
       <button id="signOut">Sign out</button>
     </div>
+
     <div id="cryptoForm" class="hidden">
       <h2>Buy Crypto & Set Alerts</h2>
       <form action="/submit" method="POST">
@@ -34,6 +32,10 @@
         <button type="submit">Submit</button>
       </form>
     </div>
+
+    <h2>Top 5 Cryptocurrencies</h2>
+    <div class="charts" id="charts"></div>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="src/main.js"></script>
   </body>
