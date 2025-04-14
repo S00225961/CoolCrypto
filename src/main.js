@@ -144,7 +144,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     userManager.getUser().then(user => {
       if (user) {
-        console.log("Username:", user.profile.preferred_username);
+        console.log("Preferred username:", user.profile.preferred_username);
+        console.log("Profile name:", user.profile.name);
+        console.log("Full profile:", user.profile);
       } else {
         console.log("No user is currently signed in.");
       }
