@@ -1,5 +1,4 @@
 import { userManager, signOutRedirect } from '../auth.js';
-import { resendSignUpCode } from 'aws-amplify/auth';
 
 window.global = window;
 
@@ -16,8 +15,6 @@ window.onload = async function () {
 
   checkIfUserIsAuthenticated();
 };
-
-
 
 // Sign-In Button Logic
 document.getElementById("signIn").addEventListener("click", async () => {
@@ -124,11 +121,38 @@ async function checkIfUserIsAuthenticated() {
     if (user && !user.expired) {
       console.log("User is authenticated:", user);
       renderCharts();
+      document.getElementById("cryptoForm").classList.remove("hidden");
     } else {
       console.log("User is not authenticated");
+      document.getElementById("cryptoForm").classList.add("hidden");
     }
   } catch (err) {
     console.error("Error retrieving user:", err);
   }
 }
+
+// crypto form
+document.addEventListener("DOMContentLoaded", function () {
+  const cryptoForm = document.querySelector("#cryptoForm form");
+  cryptoForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const coin = document.getElementById("coin").value;
+    const amount = parseFloat(document.getElementById("amount").value);
+    const high = parseFloat(document.getElementById("high").value);
+    const low = parseFloat(document.getElementById("low").value);
+
+    userManager.getUser().then(user => {
+      if (user) {
+        console.log("Username:", user.profile.preferred_username || user.profile.name || user.profile.email);
+        console.log("Full profile:", user.profile);
+      } else {
+        console.log("No user is currently signed in.");
+      }
+    });
+
+    console.log({ coin, amount, high, low });
+    cryptoForm.reset();
+  });
+});
 
