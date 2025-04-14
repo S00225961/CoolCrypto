@@ -13,18 +13,28 @@
   <div class="charts" id="charts"></div>
 
   <script type="module">
-    import { userManager, signOutRedirect } from './cognito-config.js';
+    import { userManager, signOutRedirect, isTokenValid } from './cognito.js';
     import { renderCharts } from './app.js';
 
-    const idToken = localStorage.getItem("id_token");
+    async function init() {
+      try {
+        const user = await userManager.getUser();
 
-    if (!idToken) {
-      userManager.signinRedirect();
-    } else {
-      renderCharts();
+        if (!user || !user.id_token || !isTokenValid(user.id_token)) {
+          await userManager.signinRedirect();
+        } else {
+          localStorage.setItem("id_token", user.id_token);
+          renderCharts();
+        }
+
+        document.getElementById("logout-btn").addEventListener("click", signOutRedirect);
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        await userManager.signinRedirect();
+      }
     }
 
-    document.getElementById("logout-btn").addEventListener("click", signOutRedirect);
+    init();
   </script>
 </body>
 </html>
