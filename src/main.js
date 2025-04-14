@@ -1,11 +1,7 @@
-import { Buffer } from 'buffer';
-import process from 'process';
 import { userManager, signOutRedirect } from '../auth.js';
 import { resendSignUpCode } from 'aws-amplify/auth';
 
 window.global = window;
-window.Buffer = Buffer;
-window.process = process;
 
 window.addEventListener('load', () => {
   checkIfUserIsAuthenticated();
