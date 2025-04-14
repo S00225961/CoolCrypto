@@ -137,21 +137,46 @@ document.addEventListener("DOMContentLoaded", function () {
   cryptoForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
+    const url = "https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/user"
     const coin = document.getElementById("coin").value;
     const amount = parseFloat(document.getElementById("amount").value);
-    const high = parseFloat(document.getElementById("high").value);
-    const low = parseFloat(document.getElementById("low").value);
+    const high_threshold = parseFloat(document.getElementById("high_threshold").value);
+    const low_threshold = parseFloat(document.getElementById("low_threshold").value);
 
     userManager.getUser().then(user => {
       if (user) {
         let username = user.profile["cognito:username"];
         console.log("Username:", username);
+        // Prepare the data 
+        const data = {
+          username: username,
+          coin: coin,
+          amount: amount,
+          high_threshold: high_threshold,
+          low_threshold: low_threshold
+        };
+
+        // Send the data via PUT request
+        fetch(url, {
+          method: "PUT", 
+          headers: {
+            "Content-Type": "application/json" 
+          },
+          body: JSON.stringify(data) 
+        })
+        .then(response => response.json()) 
+        .then(data => {
+          console.log("Success:", data); 
+        })
+        .catch((error) => {
+          console.error("Error:", error); 
+        });
       } else {
         console.log("No user is currently signed in.");
       }
     });
 
-    console.log({ coin, amount, high, low });
+    console.log({ coin, amount, high_threshold, low_threshold });
     cryptoForm.reset();
   });
 });

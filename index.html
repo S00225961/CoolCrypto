@@ -23,10 +23,10 @@
         <label for="amount">Amount to Buy:</label>
         <input type="number" id="amount" name="amount" step="any" required>
   
-        <label for="high">High Price Alert Threshold:</label>
+        <label for="high_threshold">High Price Alert Threshold:</label>
         <input type="number" id="high" name="high" step="any" required>
   
-        <label for="low">Low Price Alert Threshold:</label>
+        <label for="low_threshold">Low Price Alert Threshold:</label>
         <input type="number" id="low" name="low" step="any" required>
   
         <button type="submit">Submit</button>
@@ -35,7 +35,7 @@
 
     <h2>Top 5 Cryptocurrencies</h2>
     <div class="charts" id="charts"></div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="src/main.js"></script>
   </body>
