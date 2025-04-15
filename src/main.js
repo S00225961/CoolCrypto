@@ -120,6 +120,7 @@ async function checkIfUserIsAuthenticated() {
 
     if (user && !user.expired) {
       console.log("User is authenticated:", user);
+      startCryptoStepFunction();
       renderCharts();
       document.getElementById("cryptoForm").classList.remove("hidden");
     } else {
@@ -180,4 +181,24 @@ document.addEventListener("DOMContentLoaded", function () {
     cryptoForm.reset();
   });
 });
+
+// Trigger step function on sign in
+async function startCryptoStepFunction() {
+  const inputData = {
+    "stateMachineArn": "arn:aws:states:us-east-1:746131555146:stateMachine:CryptoDataStateMachine",
+    "input": "$util.escapeJavaScript($input.json('$'))"
+  }
+  
+  const response = await fetch("https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/crypto", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(inputData) 
+  });
+
+  const data = await response.json();
+  console.log("Step function response:", data);
+}
+
 
