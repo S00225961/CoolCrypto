@@ -26,6 +26,26 @@ document.getElementById("signOut").addEventListener("click", async () => {
   await signOutRedirect();
 });
 
+// Threshold btn 
+document.getElementById("thresholdBtn").addEventListener("click", async () => {
+  try {
+    const user = await userManager.getUser();
+    let username = user.profile["cognito:username"];
+    const response = await fetch(`https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/user/${username}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json(); 
+    console.log('Response data:', data);
+    return data;
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+});
+
 // Charts
 async function renderCharts(cryptos) {
   function createChart(canvasId, label, priceDataPoints) {
@@ -119,9 +139,11 @@ async function checkIfUserIsAuthenticated() {
       const parsedCryptos = JSON.parse(cryptoData.result.body);
       renderCharts(parsedCryptos);
       document.getElementById("cryptoForm").classList.remove("hidden");
+      document.getElementById("thresholdBtn").classList.remove("hidden");
     } else {
       console.log("User is not authenticated");
       document.getElementById("cryptoForm").classList.add("hidden");
+      document.getElementById("thresholdBtn").classList.add("hidden");
     }
   } catch (err) {
     console.error("Error retrieving user:", err);
@@ -164,6 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.json()) 
         .then(data => {
           console.log("Success:", data); 
+          alert("Success:", data);
         })
         .catch((error) => {
           console.error("Error:", error); 
