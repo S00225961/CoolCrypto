@@ -39,7 +39,7 @@ document.getElementById("thresholdBtn").addEventListener("click", async () => {
 
     const data = await response.json(); 
     console.log('Response data:', data);
-    document.getElementById('alertBox').value = json.stringify(data);
+    document.getElementById('alertBox').value = JSON.stringify(data);
 
   } catch (error) {
     console.error('Error fetching data:', error);
