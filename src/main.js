@@ -28,32 +28,32 @@ document.getElementById("signOut").addEventListener("click", async () => {
 
 // Charts
 async function renderCharts(cryptos) {
+  function createChart(canvasId, label, priceDataPoints) {
+    const timeLabels = priceDataPoints.map(([timestamp]) =>
+      new Date(timestamp).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    );
 
-  function generateTimestamps(priceData) {
-    const now = new Date();
-    const intervalMs = (24 * 60 * 60 * 1000) / priceData.length;
-    return priceData.map((_, i) => {
-      const time = new Date(now.getTime() - (priceData.length - i) * intervalMs);
-      return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    });
-  }
+    const prices = priceDataPoints.map(([_, price]) => price);
 
-  function createChart(canvasId, label, priceData) {
-    const timeLabels = generateTimestamps(priceData);
     const ctx = document.getElementById(canvasId).getContext('2d');
 
     new Chart(ctx, {
       type: 'line',
       data: {
         labels: timeLabels,
-        datasets: [{
-          label: `${label} (24h)`,
-          data: priceData,
-          fill: true,
-          borderColor: '#00c9a7',
-          backgroundColor: 'rgba(0, 201, 167, 0.1)',
-          tension: 0.3
-        }]
+        datasets: [
+          {
+            label: `${label} (24h)`,
+            data: prices,
+            fill: true,
+            borderColor: '#00c9a7',
+            backgroundColor: 'rgba(0, 201, 167, 0.1)',
+            tension: 0.3
+          }
+        ]
       },
       options: {
         responsive: true,
@@ -88,8 +88,11 @@ async function renderCharts(cryptos) {
   }
 
   const container = document.getElementById('charts');
+  container.innerHTML = ''; // Clear any existing charts
 
   cryptos.forEach((crypto, i) => {
+    if (!crypto.price_history || crypto.price_history.length === 0) return;
+
     const id = 'chart-' + i;
     const div = document.createElement('div');
     div.className = 'chart-container';
@@ -99,8 +102,7 @@ async function renderCharts(cryptos) {
     `;
     container.appendChild(div);
 
-    const last24hPrices = crypto.sparkline_in_7d.price.slice(-288);
-    createChart(id, crypto.name, last24hPrices);
+    createChart(id, crypto.name, crypto.price_history);
   });
 }
 
