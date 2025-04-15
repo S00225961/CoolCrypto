@@ -27,13 +27,7 @@ document.getElementById("signOut").addEventListener("click", async () => {
 });
 
 // Charts
-async function renderCharts() {
-  const API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=5&page=1&sparkline=true';
-
-  async function getCryptoData() {
-    const response = await fetch(API_URL);
-    return await response.json();
-  }
+async function renderCharts(cryptos) {
 
   function generateTimestamps(priceData) {
     const now = new Date();
@@ -93,7 +87,6 @@ async function renderCharts() {
     });
   }
 
-  const cryptos = await getCryptoData();
   const container = document.getElementById('charts');
 
   cryptos.forEach((crypto, i) => {
@@ -120,8 +113,8 @@ async function checkIfUserIsAuthenticated() {
 
     if (user && !user.expired) {
       console.log("User is authenticated:", user);
-      startCryptoStepFunction();
-      renderCharts();
+      const cryptoData = await fetchCryptoData();
+      renderCharts(cryptoData);
       document.getElementById("cryptoForm").classList.remove("hidden");
     } else {
       console.log("User is not authenticated");
@@ -182,23 +175,23 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Trigger step function on sign in
-async function startCryptoStepFunction() {
-  const inputData = {
-    "stateMachineArn": "arn:aws:states:us-east-1:746131555146:stateMachine:CryptoDataStateMachine",
-    "input": "$util.escapeJavaScript($input.json('$'))"
-  }
-  
-  const response = await fetch("https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/crypto", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(inputData) 
-  });
+// Trigger step function on sign in and get crypto data
+async function fetchCryptoData() {
+  try {
+    const response = await fetch('https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/crypto');
 
-  const data = await response.json();
-  console.log("Step function response:", data);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json(); 
+    console.log('Response data:', data);
+    return data;
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 }
+
 
 
