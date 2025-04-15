@@ -114,7 +114,8 @@ async function checkIfUserIsAuthenticated() {
     if (user && !user.expired) {
       console.log("User is authenticated:", user);
       const cryptoData = await fetchCryptoData();
-      renderCharts(cryptoData);
+      const parsedCryptos = JSON.parse(cryptoData.result.body);
+      renderCharts(parsedCryptos);
       document.getElementById("cryptoForm").classList.remove("hidden");
     } else {
       console.log("User is not authenticated");
