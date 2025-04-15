@@ -12,7 +12,7 @@ window.onload = async function () {
       console.error("Failed to handle redirect callback:", err);
     }
   }
-
+  
   checkIfUserIsAuthenticated();
 };
 
@@ -31,6 +31,25 @@ document.getElementById("thresholdBtn").addEventListener("click", async () => {
   try {
     const user = await userManager.getUser();
     let username = user.profile["cognito:username"];
+    const response = await fetch(`https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/crypto/${username}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json(); 
+    console.log('Response data:', data);
+    document.getElementById('alertBox').value = data;
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+});
+
+async function triggerCryptoAlertCheck(){
+  try {
+    const user = await userManager.getUser();
+    let username = user.profile["cognito:username"];
     const response = await fetch(`https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/user/${username}`);
 
     if (!response.ok) {
@@ -44,7 +63,7 @@ document.getElementById("thresholdBtn").addEventListener("click", async () => {
   } catch (error) {
     console.error('Error fetching data:', error);
   }
-});
+}
 
 // Charts
 async function renderCharts(cryptos) {
@@ -138,6 +157,7 @@ async function checkIfUserIsAuthenticated() {
       const cryptoData = await fetchCryptoData();
       const parsedCryptos = JSON.parse(cryptoData.result.body);
       renderCharts(parsedCryptos);
+      triggerCryptoAlertCheck();
       document.getElementById("cryptoForm").classList.remove("hidden");
       document.getElementById("thresholdBtn").classList.remove("hidden");
     } else {
@@ -187,6 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
           console.log("Success:", data); 
           alert("Success:", data);
+          triggerCryptoAlertCheck();
         })
         .catch((error) => {
           console.error("Error:", error); 
