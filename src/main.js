@@ -160,10 +160,12 @@ async function checkIfUserIsAuthenticated() {
       triggerCryptoAlertCheck();
       document.getElementById("cryptoForm").classList.remove("hidden");
       document.getElementById("thresholdBtn").classList.remove("hidden");
+      document.getElementById("alertBox").classList.remove("hidden");
     } else {
       console.log("User is not authenticated");
       document.getElementById("cryptoForm").classList.add("hidden");
       document.getElementById("thresholdBtn").classList.add("hidden");
+      document.getElementById("alertBox").classList.add("hidden");
     }
   } catch (err) {
     console.error("Error retrieving user:", err);
