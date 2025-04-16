@@ -8,10 +8,10 @@ const regionAuthConfig = {
     cognitoDomain: "https://us-east-159gzqkxdi.auth.us-east-1.amazoncognito.com"
   },
   "us-west-2": {
-    authority: "", 
-    client_id: "",
-    redirect_uri: "",
-    cognitoDomain: ""
+    authority: "https://cognito-idp.us-west-2.amazonaws.com/us-west-2_jiY8N2wRe", 
+    client_id: "5dsha53i7c4octocrumtvlopl1",
+    redirect_uri: "https://main.d94v42z7ykhoh.amplifyapp.com/",
+    cognitoDomain: "https://us-west-2jiy8n2wre.auth.us-west-2.amazoncognito.com"
   }
 };
 
