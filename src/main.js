@@ -1,8 +1,55 @@
-import { userManager, signOutRedirect } from '../auth.js';
-
+import { getUserManager, signOutRedirect } from '../auth.js';
 window.global = window;
 
+//region redirect
+let API_URL = "";
+let HOST_URL = "";
+let REGION = "";
+
+let userManager = "";
+
+// Configuration map
+const regionConfig = {
+  "us-east-1": {
+    host: "https://main.diedwkmusxaeo.amplifyapp.com/",
+    api: "https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/"
+  },
+  "us-west-2": {
+    host: "https://main.d94v42z7ykhoh.amplifyapp.com/",
+    api: "https://oew34zm0xe.execute-api.us-west-2.amazonaws.com/dev/"
+  }
+};
+
+// Set global config when user selects a region
+const regionSwitcher = document.getElementById("regionSwitcher");
+regionSwitcher.addEventListener("change", function (e) {
+  REGION = e.target.value;
+  localStorage.setItem("selectedRegion", REGION);
+
+  API_URL = regionConfig[REGION].api;
+  HOST_URL = regionConfig[REGION].host;
+
+  console.log("API:", API_URL);
+  console.log("Host:", HOST_URL);
+  console.log("Region:", REGION);
+
+  // Optional: Reload the page or navigate to a new Amplify site
+  window.location.href = HOST_URL;
+});
+
+// window reload
 window.onload = async function () {
+  const savedRegion = localStorage.getItem("selectedRegion");
+  if (savedRegion && regionConfig[savedRegion]) {
+    regionSwitcher.value = savedRegion;
+    REGION = savedRegion;
+    API_URL = regionConfig[REGION].api;
+    HOST_URL = regionConfig[REGION].host;
+    userManager = getUserManager(REGION);
+
+    console.log("Loaded saved region:", REGION);
+  }
+
   if (window.location.search.includes("code=")) {
     try {
       const user = await userManager.signinRedirectCallback();
@@ -23,7 +70,7 @@ document.getElementById("signIn").addEventListener("click", async () => {
 
 // Sign-Out Button Logic
 document.getElementById("signOut").addEventListener("click", async () => {
-  await signOutRedirect();
+  await signOutRedirect(REGION);
 });
 
 // Threshold btn 
@@ -31,7 +78,7 @@ document.getElementById("thresholdBtn").addEventListener("click", async () => {
   try {
     const user = await userManager.getUser();
     let username = user.profile["cognito:username"];
-    const response = await fetch(`https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/crypto/${username}`);
+    const response = await fetch(`${API_URL}crypto/${username}`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -50,7 +97,7 @@ async function triggerCryptoAlertCheck(){
   try {
     const user = await userManager.getUser();
     let username = user.profile["cognito:username"];
-    const response = await fetch(`https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/user/${username}`);
+    const response = await fetch(`${API_URL}user/${username}`);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -178,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
   cryptoForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    const url = "https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/user"
+    const url = `${API_URL}user`
     const coin = document.getElementById("coin").value;
     const amount = parseFloat(document.getElementById("amount").value);
     const high_threshold = parseFloat(document.getElementById("high_threshold").value);
@@ -227,7 +274,8 @@ document.addEventListener("DOMContentLoaded", function () {
 // Trigger step function on sign in and get crypto data
 async function fetchCryptoData() {
   try {
-    const response = await fetch('https://rev2k5bdik.execute-api.us-east-1.amazonaws.com/dev/crypto');
+    const url = `${API_URL}crypto`
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);

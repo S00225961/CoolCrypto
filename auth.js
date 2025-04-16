@@ -1,25 +1,39 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
-// Cognito OIDC configuration (adjust these with your settings)
-const cognitoAuthConfig = {
-  authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_59GZQkxdi",  // Replace with your Cognito domain
-  client_id: "1u2p66b14lorj0ctn1gu9o0rqa",  // Replace with your Client ID
-  redirect_uri: "https://main.diedwkmusxaeo.amplifyapp.com/",  // Local redirect URL (adjust as per your setup)
-  response_type: "code",
-  scope: "email openid phone",
+const regionAuthConfig = {
+  "us-east-1": {
+    authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_59GZQkxdi",
+    client_id: "1u2p66b14lorj0ctn1gu9o0rqa",
+    redirect_uri: "https://main.diedwkmusxaeo.amplifyapp.com/",
+    cognitoDomain: "https://us-east-159gzqkxdi.auth.us-east-1.amazoncognito.com"
+  },
+  "us-west-2": {
+    authority: "", 
+    client_id: "",
+    redirect_uri: "",
+    cognitoDomain: ""
+  }
 };
 
-// Create a UserManager instance
-export const userManager = new UserManager({
-  ...cognitoAuthConfig,
-  userStore: new WebStorageStateStore({ store: window.localStorage })
-});
+// Create a UserManager based on region
+export function getUserManager(region) {
+  const config = regionAuthConfig[region];
 
-// Sign-out functionality
-export async function signOutRedirect() {
-  const clientId = "1u2p66b14lorj0ctn1gu9o0rqa";  // Replace with your Client ID
-  const logoutUri = "https://main.diedwkmusxaeo.amplifyapp.com/";  // Set this to your logout URI
-  const cognitoDomain = "https://us-east-159gzqkxdi.auth.us-east-1.amazoncognito.com";  // Replace with your Cognito domain
-  await userManager.removeUser();
-  window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-};
+  return new UserManager({
+    authority: config.authority,
+    client_id: config.client_id,
+    redirect_uri: config.redirect_uri,
+    response_type: "code",
+    scope: "email openid phone",
+    userStore: new WebStorageStateStore({ store: window.localStorage })
+  });
+}
+
+// Sign-out function using region
+export function signOutRedirect(region) {
+  const config = regionAuthConfig[region];
+  const logoutUrl = `${config.cognitoDomain}/logout?client_id=${config.client_id}&logout_uri=${encodeURIComponent(config.redirect_uri)}`;
+  localStorage.clear(); 
+  window.location.href = logoutUrl;
+}
+
