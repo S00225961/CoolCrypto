@@ -75,6 +75,10 @@ document.getElementById("signOut").addEventListener("click", async () => {
 
 // Threshold btn 
 document.getElementById("thresholdBtn").addEventListener("click", async () => {
+  checkUserThresholds();
+});
+
+async function checkUserThresholds(){
   try {
     const user = await userManager.getUser();
     let username = user.profile["cognito:username"];
@@ -91,7 +95,7 @@ document.getElementById("thresholdBtn").addEventListener("click", async () => {
   } catch (error) {
     console.error('Error fetching data:', error);
   }
-});
+}
 
 async function triggerCryptoAlertCheck(){
   try {
@@ -208,6 +212,8 @@ async function checkIfUserIsAuthenticated() {
       document.getElementById("cryptoForm").classList.remove("hidden");
       document.getElementById("thresholdBtn").classList.remove("hidden");
       document.getElementById("alertBox").classList.remove("hidden");
+      // Make api call every 5 mins
+      setInterval(checkUserThresholds, 300000);
     } else {
       console.log("User is not authenticated");
       document.getElementById("cryptoForm").classList.add("hidden");
